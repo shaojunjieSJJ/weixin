@@ -2,8 +2,11 @@ package entity;
 
 import java.util.Map;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+@XStreamAlias("xml")
 public class TextMessage extends BaseMessage{
 
+	@XStreamAlias("Content")
 	private String content;
 
 	public String getContent() {
@@ -21,9 +24,17 @@ public class TextMessage extends BaseMessage{
 		this.content = content;
 	}
 
-	public TextMessage(Map<String, String> requestMap) {
-		super(requestMap);
+	@Override
+	public String toString() {
+		return "TextMessage [content=" + content + ", getToUserName()=" + getToUserName() + ", getFromUserName()="
+				+ getFromUserName() + ", getCreateTime()=" + getCreateTime() + "]";
 	}
+
+//	public TextMessage(Map<String, String> requestMap) {
+//		super(requestMap);
+//		this.setMsgType("text");
+//	}
+	
 	
 	
 }

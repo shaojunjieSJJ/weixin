@@ -18,6 +18,44 @@
 	<MsgId>22552592532096283</MsgId>
 </xml>
 
+<!-- 
+{
+MediaId=LDSHefK-RencSlhryaqCjeYdOsc4cj-4hwIWO9EsGraPzri-p1L-_8_KfvCvRSQl, 
+CreateTime=1575351728, ToUserName=gh_9be9c6965be2, FromUserName=otqCE0sFYYALyGujfH5HsGuinINY, 
+MsgType=image, 
+PicUrl=http://mmbiz.qpic.cn/mmbiz_jpg/TIdSmCYib4Z08dACyCkdPIibjEtgXjzpCwtiaWgqqMwx5uH6E8DFbbC3Co0WkzVO5HibbLFRrfpvgoDDokYKSNS4EA/0, 
+MsgId=22553613949152958}
+ -->
+
+<!-- 
+{
+"button":
+	[
+		{"key":"1","name":"一级点击","type":"click"},
+		{"name":"一级跳转","type":"view","url":"http://www.baidu.com"},
+		{
+			"name":"有子菜单","sub_button":
+				[
+					{"key":"31","name":"传图","sub_button":[],"type":"pic_photo_or_album"},
+					{"key":"32","name":"点击","type":"click"},
+					{"name":"网易新闻","type":"view","url":"http://news.163.com"}
+				]
+		}
+	]
+}
+ -->
+
+<!-- 
+{
+	MediaId=SHmV0za4tyDaMB_WilIE56SJtyaxTtBRScOOAOlZs6E93Sf9lki3CqDL-1IKl-em, 
+	CreateTime=1575361845, ToUserName=gh_9be9c6965be2, 
+	FromUserName=otqCE0sFYYALyGujfH5HsGuinINY, 
+	MsgType=image, 
+	PicUrl=http://mmbiz.qpic.cn/mmbiz_jpg/TIdSmCYib4Z08dACyCkdPIibjEtgXjzpCwttKV1N4ylMc0Z4FrhaBRtNdxmUicbbwuib16ag5SIezURfbI4BePrU9A/0, 
+	MsgId=22553761365843055
+}
+
+ -->
 
 
 
