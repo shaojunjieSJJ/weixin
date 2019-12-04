@@ -1,6 +1,7 @@
 package test;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.junit.Test;
@@ -14,6 +15,7 @@ import entity.PhotoOrAlbumButton;
 import entity.SubButton;
 import entity.TextMessage;
 import entity.ViewButton;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import service.WxService;
 
@@ -24,6 +26,18 @@ public class TestWx {
     public static final String API_KEY = "EE3tcXv5cxT5nUs017lLI3MG";
     public static final String SECRET_KEY = "Wtr4ZreFbnOtCu0kOhUGsfwPTr23dnaG";
 
+    
+    /**
+     * 上传素材
+     */
+    @Test
+    public void testUpload() {
+    	String file = "‪C:\\Download\\1.jpg";
+    	file = file.replace("\\\\", "/");
+    	System.out.println(file);
+    	String result = WxService.upload(file, "image");
+    	System.out.println(result);
+    }
     
 	@Test
 	public void testPic() {
@@ -43,10 +57,20 @@ public class TestWx {
         //System.setProperty("aip.log4j.conf", "path/to/your/log4j.properties");
 
         // 调用接口
-        String path = "‪C:/Users/shao/Pictures/1.jpg";
+        String path = "‪C:\\Download\\1.jpg";
+        path = path.replace("\\\\", "/");
         org.json.JSONObject res = client.basicGeneral(path, new HashMap<String, String>());
-        System.out.println(res.toString(2));		
-		
+        String json = res.toString();
+        //转为jsonObject
+        JSONObject jsonObject = JSONObject.fromObject(json);
+        JSONArray jsonArray = jsonObject.getJSONArray("words_result");
+        Iterator<JSONObject> it = jsonArray.iterator();
+        StringBuilder sb = new StringBuilder();
+        while (it.hasNext()) {
+        	JSONObject next = it.next();
+        	sb.append(next.getString("words")).append("/");
+		}
+        
 	}
 	
 	

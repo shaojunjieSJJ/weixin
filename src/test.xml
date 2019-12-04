@@ -55,6 +55,35 @@ MsgId=22553613949152958}
 	MsgId=22553761365843055
 }
 
+
+
+      {
+           "touser":"otqCE0sFYYALyGujfH5HsGuinINY",
+           "template_id":"DPX82KEfH7Aip4XWECepBvNPgtcx_05-dnmdPWeFpqg",
+           "data":{
+                   "first": {
+                       "value":"恭喜你被录取！",
+                       "color":"#173177"
+                   },
+                   "company":{
+                       "value":"巧克力",
+                       "color":"#173177"
+                   },
+                   "time": {
+                       "value":"2019年11月12日",
+                       "color":"#173177"
+                   },
+                   "result": {
+                       "value":"面试通过！",
+                       "color":"#173177"
+                   },
+                   "remark":{
+                       "value":"请和本公司HR联系",
+                       "color":"#173177"
+                   }
+           }
+       }
+       
  -->
 
 

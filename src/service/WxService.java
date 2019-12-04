@@ -1,19 +1,29 @@
 package service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.baidu.aip.ocr.AipOcr;
 import com.thoughtworks.xstream.XStream;
 
 import entity.AccessToken;
@@ -25,6 +35,7 @@ import entity.NewsMessage;
 import entity.TextMessage;
 import entity.VideoMessage;
 import entity.VoiceMessage;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import util.Util;
 
@@ -41,11 +52,16 @@ public class WxService {
 	//聚合数据（聊天机器人）的APPKEY
 	private static final String APPKEY = "3af7f1e99504ba6ada122b818d15ae92";
 	
+    //百度通用文字识别设置APPID/AK/SK
+    public static final String APP_ID = "17920778";
+    public static final String API_KEY = "EE3tcXv5cxT5nUs017lLI3MG";
+    public static final String SECRET_KEY = "Wtr4ZreFbnOtCu0kOhUGsfwPTr23dnaG";
+	
 	/**
 	 * 获取token
 	 */
 	private static void getToken() {
-		String url = GET_TOKEN_URL.replace("APPID", APPID).replace("APPID", APPID).replace("APPSECRET", APPSECRET);
+		String url = GET_TOKEN_URL.replace("APPID", APPID).replace("APPSECRET", APPSECRET);
 		String tokenStr = Util.get(url);
 		JSONObject jsonObject = JSONObject.fromObject(tokenStr);
 		String token = jsonObject.getString("access_token");
@@ -171,8 +187,28 @@ public class WxService {
 	 * 进行图片识别
 	 */
 	private static BaseMessage dealImage(Map<String, String> requestMap) {
-		 
-		return null;
+        // 初始化一个AipOcr
+        AipOcr client = new AipOcr(APP_ID, API_KEY, SECRET_KEY);
+        // 可选：设置网络连接参数
+        client.setConnectionTimeoutInMillis(2000);
+        client.setSocketTimeoutInMillis(60000);
+        // 调用接口
+        String path = requestMap.get("PicUrl");
+        //上传本地图片
+        //org.json.JSONObject res = client.basicGeneral(path, new HashMap<String, String>());
+        //上传网上图片
+        org.json.JSONObject res = client.generalUrl(path, new HashMap<String, String>());
+        String json = res.toString();
+        //转为jsonObject
+        JSONObject jsonObject = JSONObject.fromObject(json);
+        JSONArray jsonArray = jsonObject.getJSONArray("words_result");
+        Iterator<JSONObject> it = jsonArray.iterator();
+        StringBuilder sb = new StringBuilder();
+        while (it.hasNext()) {
+        	JSONObject next = it.next();
+        	sb.append(next.getString("words")).append("/");
+		}
+		return new TextMessage(requestMap, sb.toString()); 
 	}
 
 	/**
@@ -281,5 +317,65 @@ public class WxService {
         }
 		return null;
 	}
-
+	
+	/**
+	 * 上传临时素材
+	 * path路径，type类型
+	 */
+	public static String upload(String path, String type) {
+		File file = new File(path);
+		String url = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
+		url = url.replace("ACCESS_TOKEN", getAccessToken()).replace("TYPE", type);
+		try {
+			URL urlObj = new URL(url);
+			//强转为安全链接
+			HttpsURLConnection conn = (HttpsURLConnection)urlObj.openConnection();
+			//设置链接信息
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.setUseCaches(true);
+			//设置请求头信息
+			conn.setRequestProperty("Connection", "Keep-Alive");
+			conn.setRequestProperty("Charset", "utf8");
+			//数据的边界
+			String boundary = "-----" + System.currentTimeMillis();
+			conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+			//获取输出流
+			OutputStream out = conn.getOutputStream();
+			//创建文件的输入流
+			FileInputStream is = new FileInputStream("‪C:/Download/1.jpg");
+			//第一部分：头部信息
+			//准备头部信息
+			StringBuilder sb = new StringBuilder();
+			sb.append("--");
+			sb.append(boundary);
+			sb.append("\r\n"); 
+			sb.append("Content-Disposition:form-data;name=\"media\";filename=\""+file.getName()+"\"\r\n"); 
+			sb.append("Content-Type:application/octet-stream\r\n\r\n");
+			out.write(sb.toString().getBytes());
+			//第二部分：文件内容
+			byte[] b = new byte[1024];
+			int len;
+			while ((len=is.read(b))!=-1) {
+				out.write(b, 0, len);
+			}
+			//第三部分：
+			String foot = "\r\n--"+boundary+"--\r\n";
+			out.write(foot.getBytes());
+			out.flush();
+			out.close();
+			//读取数据
+			InputStream is2 = conn.getInputStream();
+			StringBuilder resp = new StringBuilder();
+			while ((len = is2.read(b))!=-1) {
+				resp.append(new String(b,0,len));
+			}
+			return resp.toString();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }
