@@ -278,6 +278,12 @@ public class WxService {
 			NewsMessage nm = new NewsMessage(requestMap, articles);
 			return nm;
 		}
+		if (msg.equals("登录")) {
+			String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE#wechat_redirect";
+			url = url.replace("APPID", APPID).replace("REDIRECT_URI", "http://wx.dashaocun.com/weixin/GetUserInfo").replace("SCOPE", "snsapi_userinfo");
+			TextMessage tm = new TextMessage(requestMap, "点击<a href=\""+url+"\">这里</a>登录");
+			return tm;
+		}
 		
 		//调用方法返回聊天的内容
 		String resp = chat(msg);
@@ -343,7 +349,7 @@ public class WxService {
 			//获取输出流
 			OutputStream out = conn.getOutputStream();
 			//创建文件的输入流
-			FileInputStream is = new FileInputStream("‪C:/Download/1.jpg");
+			FileInputStream is = new FileInputStream(file);
 			//第一部分：头部信息
 			//准备头部信息
 			StringBuilder sb = new StringBuilder();
@@ -376,6 +382,30 @@ public class WxService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	/**
+	 * 获取带参数二维码的ticket
+	 */
+	public static String getOrCodeTicket() {
+		String at = getAccessToken();
+		String url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + at;
+		// 生成临时字符二维码
+		String data = "{\"expire_seconds\": 600, \"action_name\": \"QR_STR_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \"sjjzs\"}}}";
+		String result = Util.post(url, data);
+		String ticket = JSONObject.fromObject(result).getString("ticket");
+		return ticket;
+	}
+	
+	/**
+	 * 获取用户信息
+	 */
+	public static String getUserInfo(String openid) {
+		String at = getAccessToken();
+		String url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+		url = url.replace("ACCESS_TOKEN", at).replace("OPENID", openid);
+		String result = Util.get(url);
+		return result;
 	}
 	
 }

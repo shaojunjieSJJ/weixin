@@ -26,6 +26,22 @@ public class TestWx {
     public static final String API_KEY = "EE3tcXv5cxT5nUs017lLI3MG";
     public static final String SECRET_KEY = "Wtr4ZreFbnOtCu0kOhUGsfwPTr23dnaG";
 
+    @Test
+    public void testGetUserInfo() {
+    	String user = "otqCE0sFYYALyGujfH5HsGuinINY";
+    	String info = WxService.getUserInfo(user);
+    	System.out.println(info);
+    	
+    }
+    
+    /**
+     * 生成二维码
+     */
+    @Test
+    public void testQrCode() {
+    	String ticket = WxService.getOrCodeTicket();
+    	System.out.println(ticket);
+    }
     
     /**
      * 上传素材

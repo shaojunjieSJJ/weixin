@@ -83,7 +83,10 @@ MsgId=22553613949152958}
                    }
            }
        }
-       
+
+
+
+{"expire_seconds": 600, "action_name": "QR_STR_SCENE", "action_info": {"scene": {"scene_str": "sjjzs"}}}
  -->
 
 
